@@ -136,3 +136,7 @@ uv run pytest
 - `social`：IG／TikTok 內容行事曆與排程草稿
 - `analytics`：銷售與社群 KPI 週報
 - 草稿核准後的 executor、Email／Slack 預算通知
+
+
+## TODO
+1. AI 網紅(CGI)
