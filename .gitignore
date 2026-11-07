@@ -1,0 +1,16 @@
+# 機密
+.env
+
+# Python
+__pycache__/
+*.py[oc]
+.venv/
+.pytest_cache/
+
+# 執行產物（保留資料夾本身）
+logs/*
+!logs/.gitkeep
+drafts/*
+!drafts/.gitkeep
+reports/*
+!reports/.gitkeep

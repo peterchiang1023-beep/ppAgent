@@ -1,0 +1,28 @@
+[project]
+name = "ppagent"
+version = "0.1.0"
+description = "通用銷售 AI Agent（Claude Agent SDK）— 第一階段：選品研究與市場法規"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "claude-agent-sdk>=0.2.179",
+    "pydantic>=2.14.3",
+    "python-dotenv>=1.2.4",
+    "pyyaml>=6.0.3",
+    "rich>=15.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.4.1.post1",
+]
+
+[tool.uv]
+# 這是應用程式而非函式庫，不需要打包
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

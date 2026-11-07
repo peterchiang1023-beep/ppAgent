@@ -1,0 +1,90 @@
+# 範例產品設定檔（虛構產品）
+# 換產品時，複製本檔並修改欄位即可，程式碼不需變動。
+
+product_name: 矽膠摺疊收納盒（Collapsible Silicone Storage Box）
+category: 居家收納 / Home & Kitchen Storage
+description: >
+  食品級矽膠＋PP 框架的可摺疊收納盒，收合後厚度僅 4.5 cm，
+  適用冰箱、廚房、露營與車用收納。
+
+# 規格（自由欄位，可依產品增減）
+specs:
+  material: 食品級矽膠（LFGB 等級）+ PP 框架
+  sizes: [S 2L, M 5L, L 10L]
+  colors: [灰色, 鼠尾草綠, 米白]
+  folded_height_cm: 4.5
+  temperature_range_c: "-40 ~ 230"
+  dishwasher_safe: true
+  weight_g: { S: 260, M: 420, L: 680 }
+  amazon_us_asin: B0EXAMPLE00   # 美國 Amazon 既有商品（範例）
+
+# 成本（每件，以 M 尺寸為基準）
+cost:
+  currency: USD
+  unit_cost: 3.20                # 工廠出廠價 FOB
+  packaging_cost: 0.45
+  shipping_to_eu_per_unit: 0.90  # 海運頭程至歐洲倉
+  duty_rate: 0.065               # 進口關稅（依 HS code 確認，此為估計值）
+
+# 建議售價（含 VAT）
+suggested_retail_price:
+  EUR: 19.90
+  CZK: 499
+  USD: 21.99
+
+moq: 500
+
+# 目標國家與語言（vat_rate 為標準稅率，實際適用稅率請再確認）
+target_markets:
+  - country: CZ
+    languages: [cs]
+    currency: CZK
+    vat_rate: 0.21
+  - country: DE
+    languages: [de]
+    currency: EUR
+    vat_rate: 0.19
+  - country: PL
+    languages: [pl]
+    currency: PLN
+    vat_rate: 0.23
+  - country: SK
+    languages: [sk]
+    currency: EUR
+    vat_rate: 0.23
+
+# 目標通路
+target_channels:
+  - Amazon.de（Pan-EU FBA）
+  - Alza.cz
+  - Mall.cz / Allegro
+  - Kaufland Marketplace
+  - B2B 居家用品經銷商
+  - 自有 Shopify 網站
+
+# 品牌語氣
+brand_voice: >
+  簡潔、實用、環保意識；用具體情境說明好處，不誇大。
+  語氣友善專業，避免過度行銷用語。
+
+# 文案禁用字詞（含法規風險用語）
+banned_words:
+  - 100% safe
+  - BPA-free guaranteed
+  - eco-friendly          # 歐盟綠色聲明指令下，未經證實的環保宣稱有風險
+  - biodegradable
+  - antibacterial         # 抗菌宣稱可能涉及歐盟殺生物劑法規（BPR）
+  - best in the world
+  - medical grade
+
+# 認證文件清單（已具備 / 需準備）
+certifications:
+  - LFGB 食品接觸材料檢測報告（已具備）
+  - EU 1935/2004 食品接觸材料符合性聲明 DoC（需準備）
+  - FDA 食品接觸檢測（美國，已具備）
+  - REACH SVHC 檢測（需準備）
+  - GPSR 歐盟責任人（EU Responsible Person）資訊（需準備）
+  - 包裝 EPR 註冊（德國 LUCID、捷克 EKO-KOM，需準備）
+
+# 利潤底線（淨利率，0~1）
+min_profit_margin: 0.25
