@@ -1,8 +1,9 @@
 """通用銷售 AI Agent — 命令列介面。
 
 範例：
-    python main.py research   --profile profiles/example.yaml --market CZ
-    python main.py compliance --profile profiles/example.yaml --market DE
+    python main.py products   --profile profiles/example.yaml
+    python main.py research   --profile profiles/example.yaml --product yoga-mat --market CZ
+    python main.py compliance --profile profiles/example.yaml --product push-up-bar --market DE
     python main.py budget
     python main.py drafts list
     python main.py drafts approve <草稿編號> --note "確認內容無誤"
@@ -21,7 +22,7 @@ from rich.table import Table
 from sales_agent.config import ConfigError, load_settings
 from sales_agent.core.budget import BudgetExceeded, BudgetTracker
 from sales_agent.logging_setup import log_action, setup_logging
-from sales_agent.profiles.loader import ProfileError, load_profile
+from sales_agent.profiles.loader import ProfileError, list_products, load_profile
 
 console = Console()
 
@@ -34,6 +35,10 @@ def build_parser() -> argparse.ArgumentParser:
         p = sub.add_parser(name, help=help_text)
         p.add_argument("--profile", required=True, help="產品設定檔 YAML 路徑")
         p.add_argument("--market", required=True, help="目標國家 ISO 國碼，例如 CZ、DE")
+        p.add_argument("--product", help="多產品設定檔中的產品代號，例如 yoga-mat")
+
+    lp = sub.add_parser("products", help="列出設定檔中的產品代號")
+    lp.add_argument("--profile", required=True, help="產品設定檔 YAML 路徑")
 
     sub.add_parser("budget", help="查看今日預算與呼叫次數")
 
@@ -55,7 +60,7 @@ async def run_agent_task(args, settings) -> int:
     from sales_agent.core.tasks import TASKS
 
     settings.require_api_key()
-    profile = load_profile(args.profile)
+    profile = load_profile(args.profile, args.product)
     market = args.market.strip().upper()
     budget = BudgetTracker(settings.logs_dir, settings.daily_budget_usd, settings.daily_tool_call_limit)
     supervisor = Supervisor(settings, profile, budget, console)
@@ -106,6 +111,13 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command in ("research", "compliance"):
             return asyncio.run(run_agent_task(args, settings))
+        if args.command == "products":
+            products = list_products(args.profile)
+            if not products:
+                console.print("這是單一產品設定檔，不需要 --product。")
+            for pid, name in products.items():
+                console.print(f"[bold]{pid}[/bold]  {name}")
+            return 0
         if args.command == "budget":
             b = BudgetTracker(settings.logs_dir, settings.daily_budget_usd, settings.daily_tool_call_limit)
             console.print_json(json.dumps(b.status(), ensure_ascii=False))

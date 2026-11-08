@@ -32,7 +32,7 @@ from rich.console import Console
 from sales_agent.config import ConfigError, load_settings
 from sales_agent.core.budget import BudgetExceeded, BudgetTracker
 from sales_agent.logging_setup import log_action, setup_logging
-from sales_agent.profiles.loader import ProfileError, load_profile
+from sales_agent.profiles.loader import ProfileError, list_products, load_profile
 
 settings = load_settings()
 setup_logging(settings.logs_dir)
@@ -58,6 +58,7 @@ class RunRequest(BaseModel):
     task: Literal["research", "compliance"]
     market: str = Field(min_length=2, max_length=3, description="ISO 國碼，例如 CZ、DE")
     profile: str = Field(default="example", description="profiles/ 底下的設定檔名稱（不含 .yaml）")
+    product: str | None = Field(default=None, description="多產品設定檔中的產品代號，例如 yoga-mat（可用 GET /profiles 查詢）")
 
 
 class DraftDecision(BaseModel):
@@ -90,6 +91,21 @@ async def health() -> dict:
     return {"ok": True, "busy": _run_lock.locked()}
 
 
+@app.get("/profiles")
+async def list_profiles() -> list[dict]:
+    """列出設定檔與其中的產品代號（單一產品格式的 products 為空）。"""
+    out = []
+    for path in sorted(PROFILES_DIR.glob("*.yaml")):
+        try:
+            products = list_products(path)
+        except ProfileError as exc:
+            out.append({"profile": path.stem, "error": str(exc)})
+            continue
+        out.append({"profile": path.stem,
+                    "products": [{"product": k, "product_name": v} for k, v in products.items()]})
+    return out
+
+
 @app.post("/runs", status_code=202)
 async def create_run(req: RunRequest) -> dict:
     from sales_agent.core.supervisor import Supervisor
@@ -97,7 +113,7 @@ async def create_run(req: RunRequest) -> dict:
 
     try:
         settings.require_api_key()
-        profile = load_profile(_profile_path(req.profile))
+        profile = load_profile(_profile_path(req.profile), req.product)
     except (ConfigError, ProfileError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -119,9 +135,9 @@ async def create_run(req: RunRequest) -> dict:
 
     run_id = supervisor.run_id
     task_name = f"{req.task}:{market}"
-    _runs[run_id] = {"run_id": run_id, "task": task_name, "profile": req.profile,
-                     "status": "running", "created_at": _now()}
-    log_action("api_run_create", run_id=run_id, task=task_name, profile=req.profile)
+    _runs[run_id] = {"run_id": run_id, "task": task_name, "profile": req.profile, "product": req.product,
+                     "product_name": profile.product_name, "status": "running", "created_at": _now()}
+    log_action("api_run_create", run_id=run_id, task=task_name, profile=req.profile, product=req.product)
 
     async def _execute() -> None:
         try:

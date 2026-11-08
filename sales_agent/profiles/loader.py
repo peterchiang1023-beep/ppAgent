@@ -1,6 +1,10 @@
 """客製化層：讀取並驗證 profiles/*.yaml 產品與市場設定。
 
-換產品只需要換一個 YAML 檔，程式碼不需修改。
+設定檔有兩種格式：
+- 單一產品：整個檔案就是一個產品（舊格式，仍支援）。
+- 多產品：`defaults:` 放共用欄位（市場、通路、品牌語氣、禁用字詞…），
+  `products:` 以產品代號為鍵列出各產品。載入時把 defaults 與該產品合併：
+  一般欄位由產品覆蓋 defaults；banned_words 與 certifications 則合併（defaults 在前、去除重複）。
 """
 
 from __future__ import annotations
@@ -81,8 +85,11 @@ class ProductProfile(BaseModel):
         return yaml.safe_dump(self.model_dump(), allow_unicode=True, sort_keys=False)
 
 
-def load_profile(path: str | Path) -> ProductProfile:
-    """讀取 YAML 並驗證欄位。"""
+# 合併而非覆蓋的清單欄位
+MERGED_LIST_FIELDS = ("banned_words", "certifications")
+
+
+def _read_yaml(path: str | Path) -> tuple[Path, dict[str, Any]]:
     p = Path(path)
     if not p.is_file():
         raise ProfileError(f"找不到設定檔：{p}")
@@ -90,7 +97,57 @@ def load_profile(path: str | Path) -> ProductProfile:
         data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
     except yaml.YAMLError as exc:
         raise ProfileError(f"YAML 格式錯誤：{exc}") from exc
+    if not isinstance(data, dict):
+        raise ProfileError(f"設定檔最外層必須是對應表（mapping）：{p}")
+    return p, data
+
+
+def _products_section(p: Path, data: dict[str, Any]) -> dict[str, Any] | None:
+    """多產品格式回傳 products 對應表；單一產品格式回傳 None。"""
+    if "products" not in data:
+        return None
+    products = data["products"]
+    if not isinstance(products, dict) or not products:
+        raise ProfileError(f"products 必須是「產品代號: 產品內容」的對應表，且至少一項：{p}")
+    return products
+
+
+def merge_product(defaults: dict[str, Any], product: dict[str, Any]) -> dict[str, Any]:
+    """合併共用欄位與產品欄位。"""
+    merged = {**defaults, **product}
+    for key in MERGED_LIST_FIELDS:
+        if key in defaults and key in product:
+            merged[key] = list(dict.fromkeys([*defaults[key], *product[key]]))
+    return merged
+
+
+def list_products(path: str | Path) -> dict[str, str]:
+    """回傳 {產品代號: 產品名稱}。單一產品格式回傳空 dict。"""
+    p, data = _read_yaml(path)
+    products = _products_section(p, data)
+    if products is None:
+        return {}
+    return {pid: str((body or {}).get("product_name", pid)) for pid, body in products.items()}
+
+
+def load_profile(path: str | Path, product: str | None = None) -> ProductProfile:
+    """讀取 YAML 並驗證欄位。多產品格式需指定 product（只有一個產品時可省略）。"""
+    p, data = _read_yaml(path)
+    products = _products_section(p, data)
+    if products is None:
+        if product:
+            raise ProfileError(f"{p.name} 是單一產品設定檔，不需要指定產品（收到 {product!r}）")
+    else:
+        if product is None and len(products) == 1:
+            product = next(iter(products))
+        if product is None:
+            raise ProfileError(f"{p.name} 有多個產品，請指定其中一個：{', '.join(products)}")
+        if product not in products:
+            raise ProfileError(f"{p.name} 沒有產品 {product!r}，可用：{', '.join(products)}")
+        defaults = data.get("defaults") or {}
+        data = merge_product(defaults, products[product] or {})
     try:
         return ProductProfile.model_validate(data)
     except Exception as exc:  # pydantic.ValidationError
-        raise ProfileError(f"設定檔欄位驗證失敗（{p}）：\n{exc}") from exc
+        label = f"{p}" + (f"，產品 {product}" if product else "")
+        raise ProfileError(f"設定檔欄位驗證失敗（{label}）：\n{exc}") from exc

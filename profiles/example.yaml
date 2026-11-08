@@ -1,101 +1,165 @@
-# JFIT Premium Yoga Mat（Peakland 代理）
-# 規格來源：https://www.jfit.com/product-page/yoga-mats（2026-11-08 查詢）
+# JFIT 產品設定檔（Peakland 代理）— 多產品格式
+#
+# defaults：所有產品共用的欄位（市場、通路、品牌語氣、共用禁用字詞與認證、利潤底線）
+# products：以「產品代號」為鍵，只寫該產品自己的欄位；同名欄位會覆蓋 defaults，
+#           banned_words 與 certifications 則會與 defaults 合併。
+#
+# 執行時指定產品代號，例如：
+#   API：{"task": "research", "market": "CZ", "profile": "example", "product": "yoga-mat"}
+#   CLI：python main.py research --profile profiles/example.yaml --product yoga-mat --market CZ
+#
+# 規格來源：https://www.jfit.com（2026-11-08 查詢）。
 # 標註「待確認」的數值為估計，請用實際報價／檢測報告取代後再做決策。
 # 前提假設：Peakland 已取得 JFIT（Champion Sports）在歐盟的銷售授權。
 
-product_name: JFIT 瑜珈墊（JFIT Premium Yoga Mat）
-category: 運動健身 / 瑜珈與皮拉提斯（Sports & Fitness / Yoga Mats）
-description: >
-  美國健身品牌 JFIT（Champion Sports 旗下）的 PVC 瑜珈墊，表面為格紋（waffle）防滑紋路，
-  柔軟好捲收、方便攜帶，適合瑜珈、皮拉提斯與居家地板運動。
-  在美國透過 Amazon 與零售通路銷售，由亞洲代理 Peakland International 供貨，
-  計畫以 JFIT 品牌拓展至捷克與歐洲市場。
+defaults:
+  category: 運動健身（Sports & Fitness）
+  moq: 500   # 待確認（各產品可另外覆蓋）
 
-# 規格（自由欄位）
-specs:
-  brand: JFIT（by Champion Sports）
-  material: PVC
-  surface: 格紋（waffle）防滑紋路
-  sizes: ["173 x 61 cm（68 x 24 吋）", "183 x 61 cm（72 x 24 吋）"]
-  thickness_mm: "6（待確認：官網同時寫 3 mm 與 6 mm）"
-  weight_kg: "約 1.1（待確認，6 mm PVC 173 cm 款估計）"
-  colors: "多色（待確認實際色號）"
-  care: 首次使用前攤開通風 2~3 天去除包裝氣味；使用後以溫和肥皂水擦拭
-  us_amazon_store: https://www.amazon.com/stores/JFIT/page/C0E86E77-C703-4E2E-9B56-C09F6E472B5C
-  brand_authorization: 假設 Peakland 已取得 JFIT 歐盟銷售授權（待確認書面授權範圍）
+  # 目標國家與語言（vat_rate 為標準稅率）
+  target_markets:
+    - country: CZ
+      languages: [cs]
+      currency: CZK
+      vat_rate: 0.21
+    - country: DE
+      languages: [de]
+      currency: EUR
+      vat_rate: 0.19
+    - country: PL
+      languages: [pl]
+      currency: PLN
+      vat_rate: 0.23
+    - country: SK
+      languages: [sk]
+      currency: EUR
+      vat_rate: 0.23
 
-# 成本（每件，以 173 cm / 6 mm 款為基準）—— 全部待確認
-cost:
-  currency: USD
-  unit_cost: 4.00                # 待確認：向 Champion Sports／工廠取得實際 FOB 報價
-  packaging_cost: 0.40           # 待確認：綁帶＋貼標／彩盒
-  shipping_to_eu_per_unit: 1.20  # 待確認：海運頭程至歐洲倉（捲起約 61 x 12 x 12 cm）
-  duty_rate: 0.027               # 待確認：HS 9506.91（健身器材）2.7%；若歸 3926（塑膠製品）為 6.5%
+  target_channels:
+    - Amazon.de（Pan-EU FBA）
+    - Alza.cz
+    - Kaufland Marketplace
+    - Mall.cz / Allegro
+    - 運動用品連鎖／健身房與瑜珈教室 B2B
+    - 自有 Shopify 網站
 
-# 建議售價（含 VAT）—— 待確認，依歐洲 PVC 6 mm 瑜珈墊常見價格帶初估
-suggested_retail_price:
-  EUR: 24.90
-  CZK: 599
-  PLN: 99
-  USD: 24.99
+  brand_voice: >
+    積極、鼓勵、實在（JFIT 標語：Fuel your mind and body）。
+    用具體運動情境說明好處，適合新手到進階使用者；不誇大、不做健康療效宣稱。
 
-moq: 500   # 待確認
+  # 所有產品共用的文案禁用字詞（各產品可再追加）
+  banned_words:
+    - eco-friendly          # 歐盟綠色聲明規範下，未經證實的環保宣稱有風險
+    - biodegradable
+    - non-toxic             # 需有檢測支持，否則屬未經證實宣稱
+    - 100% safe
+    - antibacterial         # 可能涉及歐盟殺生物劑法規（BPR）
+    - medical grade
+    - cures back pain       # 醫療療效宣稱
+    - best in the world
 
-# 目標國家與語言（vat_rate 為標準稅率）
-target_markets:
-  - country: CZ
-    languages: [cs]
-    currency: CZK
-    vat_rate: 0.21
-  - country: DE
-    languages: [de]
-    currency: EUR
-    vat_rate: 0.19
-  - country: PL
-    languages: [pl]
-    currency: PLN
-    vat_rate: 0.23
-  - country: SK
-    languages: [sk]
-    currency: EUR
-    vat_rate: 0.23
+  # 所有產品共用的認證與文件（各產品可再追加）
+  certifications:
+    - JFIT 歐盟銷售授權書與商標使用授權（假設已具備，待確認範圍）
+    - JFIT 歐盟商標註冊（EUIPO）— Amazon.de Brand Registry 需要（待確認）
+    - GPSR 歐盟責任人（EU Responsible Person）資訊與產品安全資訊（需準備）
+    - 包裝 EPR 註冊（德國 LUCID、捷克 EKO-KOM，需準備）
+    - REACH SVHC 檢測（需準備）
+    - 美國既有檢測報告（如 CPSIA／Prop 65，待確認是否可沿用為參考）
 
-# 目標通路
-target_channels:
-  - Amazon.de（Pan-EU FBA）
-  - Alza.cz
-  - Kaufland Marketplace
-  - Mall.cz / Allegro
-  - 運動用品連鎖／健身房與瑜珈教室 B2B
-  - 自有 Shopify 網站
+  min_profit_margin: 0.25
 
-# 品牌語氣
-brand_voice: >
-  積極、鼓勵、實在（JFIT 標語：Fuel your mind and body）。
-  用具體運動情境說明好處，適合新手到進階使用者；不誇大、不做健康療效宣稱。
+products:
+  # ---------------------------------------------------------------- 瑜珈墊
+  yoga-mat:
+    product_name: JFIT 瑜珈墊（JFIT Premium Yoga Mat）
+    category: 運動健身 / 瑜珈與皮拉提斯（Sports & Fitness / Yoga Mats）
+    description: >
+      美國健身品牌 JFIT（Champion Sports 旗下）的 PVC 瑜珈墊，表面為格紋（waffle）防滑紋路，
+      柔軟好捲收、方便攜帶，適合瑜珈、皮拉提斯與居家地板運動。
+      在美國透過 Amazon 與零售通路銷售，由亞洲代理 Peakland International 供貨。
+    specs:
+      brand: JFIT（by Champion Sports）
+      source: https://www.jfit.com/product-page/yoga-mats
+      material: PVC
+      surface: 格紋（waffle）防滑紋路
+      sizes: ["173 x 61 cm（68 x 24 吋）", "183 x 61 cm（72 x 24 吋）"]
+      thickness_mm: "6（待確認：官網同時寫 3 mm 與 6 mm）"
+      weight_kg: "約 1.1（待確認，6 mm PVC 173 cm 款估計）"
+      colors: "多色（待確認實際色號）"
+      care: 首次使用前攤開通風 2~3 天去除包裝氣味；使用後以溫和肥皂水擦拭
+    cost:                            # 以 173 cm / 6 mm 款為基準，全部待確認
+      currency: USD
+      unit_cost: 4.00
+      packaging_cost: 0.40
+      shipping_to_eu_per_unit: 1.20  # 捲起約 61 x 12 x 12 cm
+      duty_rate: 0.027               # HS 9506.91 為 2.7%；若歸 3926（塑膠製品）為 6.5%
+    suggested_retail_price: { EUR: 24.90, CZK: 599, PLN: 99, USD: 24.99 }   # 待確認
+    banned_words:
+      - phthalate-free      # 僅在取得 REACH 鄰苯二甲酸酯檢測報告後才可使用
+    certifications:
+      - REACH 附件 XVII 第 51/52 項 鄰苯二甲酸酯檢測（PVC 材質必測，需準備）
+      - REACH 附件 XVII 第 50 項 多環芳香烴 PAH 檢測（與皮膚接觸的塑膠，需準備）
 
-# 文案禁用字詞（含法規與平台風險用語）
-banned_words:
-  - eco-friendly          # PVC 材質，且歐盟綠色聲明規範下未經證實的環保宣稱有風險
-  - biodegradable
-  - non-toxic             # 需有檢測支持，否則屬未經證實宣稱
-  - phthalate-free        # 僅在取得 REACH 鄰苯二甲酸酯檢測報告後才可使用
-  - 100% safe
-  - antibacterial         # 可能涉及歐盟殺生物劑法規（BPR）
-  - medical grade
-  - cures back pain       # 醫療療效宣稱
-  - best in the world
+  # ---------------------------------------------------------------- 伏地挺身架
+  push-up-bar:
+    product_name: JFIT 伏地挺身架 9 吋（JFIT Pro Push Up Bar Stand Set - 9"）
+    category: 運動健身 / 居家重訓配件（Sports & Fitness / Strength Training）
+    description: >
+      JFIT 熱銷款伏地挺身架（一組兩支），台灣製鍍鉻金屬骨架、泡棉包覆防滑握把與橡膠防滑腳墊，
+      加深伏地挺身動作幅度，鍛鍊胸、肩、背肌群；附工具、組裝簡單，輕巧好收納。
+    specs:
+      brand: JFIT（by Champion Sports）
+      source: https://www.jfit.com/product-page/pro-push-up-bar-stand-set-9
+      origin: 台灣製（Made in Taiwan）
+      material: 鍍鉻金屬骨架＋泡棉握把＋橡膠防滑腳墊
+      dimensions: "41 x 25 x 23 cm（16 x 10 x 9 吋）"
+      grip_diameter: "4.4 cm（1.75 吋）"
+      variants: ["9 吋", "11 吋"]
+      max_load_kg: "待確認（官網未標示，歐洲買家常會查詢）"
+      weight_kg: "約 1.5／組（待確認）"
+      included: 組裝五金與螺絲起子
+    cost:                            # 全部待確認
+      currency: USD
+      unit_cost: 5.50
+      packaging_cost: 0.50
+      shipping_to_eu_per_unit: 0.90
+      duty_rate: 0.027               # HS 9506.91（健身器材）2.7%，待報關行確認
+    suggested_retail_price: { EUR: 29.90, CZK: 749, PLN: 129, USD: 29.99 }  # 待確認
+    banned_words:
+      - unbreakable
+      - lifetime warranty   # 除非實際提供
+    certifications:
+      - 最大承重測試報告（需準備，建議在商品頁標示）
+      - REACH 附件 XVII 第 50 項 PAH 檢測（泡棉握把、橡膠腳墊，需準備）
+      - REACH 附件 XVII 第 27 項 鎳釋出（鍍鉻金屬若長時間接觸皮膚，待確認是否適用）
+      - 原產地證明（台灣製，關稅與標示用，需準備）
 
-# 認證與文件（已具備 / 需準備）
-certifications:
-  - JFIT 歐盟銷售授權書與商標使用授權（假設已具備，待確認範圍）
-  - JFIT 歐盟商標註冊（EUIPO）— Amazon.de Brand Registry 需要（待確認）
-  - REACH 附件 XVII 第 51/52 項 鄰苯二甲酸酯檢測（PVC 材質必測，需準備）
-  - REACH 附件 XVII 第 50 項 多環芳香烴 PAH 檢測（與皮膚接觸的塑膠，需準備）
-  - REACH SVHC 檢測（需準備）
-  - GPSR 歐盟責任人（EU Responsible Person）資訊與產品安全資訊（需準備）
-  - 包裝 EPR 註冊（德國 LUCID、捷克 EKO-KOM，需準備）
-  - 美國既有檢測報告（如 CPSIA／Prop 65，待確認是否可沿用為參考）
-
-# 利潤底線（淨利率，0~1）
-min_profit_margin: 0.25
+  # ---------------------------------------------------------------- 泡棉滾筒
+  foam-roller:
+    product_name: JFIT 高密度泡棉滾筒（JFIT High Density Extra Firm Foam Roller）
+    category: 運動健身 / 恢復與伸展（Sports & Fitness / Recovery）
+    description: >
+      JFIT 系列中最硬的高密度 EPP 泡棉滾筒，無填充物、長期使用不變形，
+      適合有經驗的使用者做運動後放鬆、伸展與日常肌肉恢復訓練。
+    specs:
+      brand: JFIT（by Champion Sports）
+      source: https://www.jfit.com/product-page/extra-firm-foam-roller-high-density
+      material: 高密度 EPP 泡棉（無填充物）
+      lengths: ["30 cm（12 吋）", "46 cm（18 吋）", "61 cm（24 吋）"]
+      diameter_cm: "約 15（待確認）"
+      weight_kg: "約 0.4（61 cm 款，待確認）"
+      care: 以溫和肥皂水清潔
+    cost:                            # 以 61 cm 款為基準，全部待確認
+      currency: USD
+      unit_cost: 3.80
+      packaging_cost: 0.30
+      shipping_to_eu_per_unit: 1.50  # 體積大、重量輕，運費以材積計
+      duty_rate: 0.027               # HS 9506.91 為 2.7%；若歸 3926 為 6.5%，待確認
+    suggested_retail_price: { EUR: 24.90, CZK: 599, PLN: 99, USD: 24.99 }   # 待確認
+    banned_words:
+      - medical device
+      - physiotherapist approved   # 除非有實際背書
+      - rehab                      # 官網用語，但在歐盟可能被視為醫療宣稱，文案避免
+    certifications:
+      - REACH 附件 XVII 第 50 項 PAH 檢測（與皮膚接觸的泡棉，需準備）

@@ -73,11 +73,14 @@ cp .env.example .env
 ## 執行範例
 
 ```bash
-# 選品研究（捷克）
-uv run python main.py research --profile profiles/example.yaml --market CZ
+# 列出設定檔中的產品代號
+uv run python main.py products --profile profiles/example.yaml
 
-# 市場與法規（德國）
-uv run python main.py compliance --profile profiles/example.yaml --market DE
+# 選品研究（瑜珈墊，捷克）
+uv run python main.py research --profile profiles/example.yaml --product yoga-mat --market CZ
+
+# 市場與法規（伏地挺身架，德國）
+uv run python main.py compliance --profile profiles/example.yaml --product push-up-bar --market DE
 
 # 查看今日預算使用量
 uv run python main.py budget
@@ -106,7 +109,7 @@ uv run uvicorn server:app --reload --port 8000
 # 建立任務（立刻回傳 run_id）
 curl -X POST http://127.0.0.1:8000/runs \
   -H 'Content-Type: application/json' \
-  -d '{"task": "research", "market": "CZ", "profile": "example"}'
+  -d '{"task": "research", "market": "CZ", "profile": "example", "product": "yoga-mat"}'
 
 # 查詢狀態：running / succeeded / failed，完成後含 reports 與 final_text
 curl http://127.0.0.1:8000/runs/<run_id>
@@ -119,7 +122,8 @@ curl http://127.0.0.1:8000/reports/<檔名>.md
 | 方法 | 路徑 | 說明 |
 |---|---|---|
 | GET | `/health` | 健康檢查，`busy` 表示是否有任務執行中 |
-| POST | `/runs` | 建立任務；`task` 為 `research` 或 `compliance`，`profile` 為 `profiles/` 下的檔名（不含 `.yaml`） |
+| GET | `/profiles` | 列出設定檔與其中的產品代號 |
+| POST | `/runs` | 建立任務；`task` 為 `research` 或 `compliance`，`profile` 為 `profiles/` 下的檔名（不含 `.yaml`），多產品設定檔需加 `product` |
 | GET | `/runs`、`/runs/{run_id}` | 任務列表／狀態與結果 |
 | GET | `/reports`、`/reports/{檔名}` | 報告列表／Markdown 內容 |
 | GET | `/budget` | 今日預算與呼叫次數 |
@@ -131,9 +135,28 @@ curl http://127.0.0.1:8000/reports/<檔名>.md
 - 任務狀態存在記憶體，伺服器重啟後清空（報告、草稿、日誌仍在磁碟上）。
 - 要對外開放前，請在 `.env` 設定 `SERVER_API_KEY`，呼叫時帶 `-H 'X-API-Key: <金鑰>'`。
 
-## 換產品
+## 換產品／多產品
 
-複製 `profiles/example.yaml` 修改即可。欄位：
+`profiles/example.yaml` 是多產品格式（目前有 JFIT 的 `yoga-mat`、`push-up-bar`、`foam-roller`）：
+
+```yaml
+defaults:          # 所有產品共用：target_markets、target_channels、brand_voice、
+  ...              # banned_words、certifications、min_profit_margin、moq…
+products:
+  yoga-mat:        # 產品代號（執行時用 --product / "product" 指定）
+    product_name: ...
+    specs: ...
+    cost: ...
+    suggested_retail_price: ...
+    banned_words: [...]     # 會與 defaults 合併
+    certifications: [...]   # 會與 defaults 合併
+```
+
+規則：產品的欄位覆蓋 defaults；`banned_words` 與 `certifications` 則與 defaults 合併。
+新增產品＝在 `products:` 下加一段；換公司或品牌＝另建一個設定檔。
+舊的單一產品格式（整個檔案就是一個產品、沒有 `products:`）仍然支援，不需要 `--product`。
+
+欄位：
 
 - `product_name`、`category`、`description`、`specs`（規格，自由欄位）
 - `cost`：`unit_cost`、`packaging_cost`、`shipping_to_eu_per_unit`、`duty_rate`

@@ -33,7 +33,7 @@ def settings(tmp_path: Path) -> Settings:
 
 @pytest.fixture
 def profile():
-    return load_profile(EXAMPLE_PROFILE)
+    return load_profile(EXAMPLE_PROFILE, "yoga-mat")
 
 
 @pytest.fixture
