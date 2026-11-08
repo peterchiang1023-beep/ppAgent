@@ -1,40 +1,47 @@
-# 範例產品設定檔（虛構產品）
-# 換產品時，複製本檔並修改欄位即可，程式碼不需變動。
+# JFIT Premium Yoga Mat（Peakland 代理）
+# 規格來源：https://www.jfit.com/product-page/yoga-mats（2026-11-08 查詢）
+# 標註「待確認」的數值為估計，請用實際報價／檢測報告取代後再做決策。
+# 前提假設：Peakland 已取得 JFIT（Champion Sports）在歐盟的銷售授權。
 
-product_name: 矽膠摺疊收納盒（Collapsible Silicone Storage Box）
-category: 居家收納 / Home & Kitchen Storage
+product_name: JFIT 瑜珈墊（JFIT Premium Yoga Mat）
+category: 運動健身 / 瑜珈與皮拉提斯（Sports & Fitness / Yoga Mats）
 description: >
-  食品級矽膠＋PP 框架的可摺疊收納盒，收合後厚度僅 4.5 cm，
-  適用冰箱、廚房、露營與車用收納。
+  美國健身品牌 JFIT（Champion Sports 旗下）的 PVC 瑜珈墊，表面為格紋（waffle）防滑紋路，
+  柔軟好捲收、方便攜帶，適合瑜珈、皮拉提斯與居家地板運動。
+  在美國透過 Amazon 與零售通路銷售，由亞洲代理 Peakland International 供貨，
+  計畫以 JFIT 品牌拓展至捷克與歐洲市場。
 
-# 規格（自由欄位，可依產品增減）
+# 規格（自由欄位）
 specs:
-  material: 食品級矽膠（LFGB 等級）+ PP 框架
-  sizes: [S 2L, M 5L, L 10L]
-  colors: [灰色, 鼠尾草綠, 米白]
-  folded_height_cm: 4.5
-  temperature_range_c: "-40 ~ 230"
-  dishwasher_safe: true
-  weight_g: { S: 260, M: 420, L: 680 }
-  amazon_us_asin: B0EXAMPLE00   # 美國 Amazon 既有商品（範例）
+  brand: JFIT（by Champion Sports）
+  material: PVC
+  surface: 格紋（waffle）防滑紋路
+  sizes: ["173 x 61 cm（68 x 24 吋）", "183 x 61 cm（72 x 24 吋）"]
+  thickness_mm: "6（待確認：官網同時寫 3 mm 與 6 mm）"
+  weight_kg: "約 1.1（待確認，6 mm PVC 173 cm 款估計）"
+  colors: "多色（待確認實際色號）"
+  care: 首次使用前攤開通風 2~3 天去除包裝氣味；使用後以溫和肥皂水擦拭
+  us_amazon_store: https://www.amazon.com/stores/JFIT/page/C0E86E77-C703-4E2E-9B56-C09F6E472B5C
+  brand_authorization: 假設 Peakland 已取得 JFIT 歐盟銷售授權（待確認書面授權範圍）
 
-# 成本（每件，以 M 尺寸為基準）
+# 成本（每件，以 173 cm / 6 mm 款為基準）—— 全部待確認
 cost:
   currency: USD
-  unit_cost: 3.20                # 工廠出廠價 FOB
-  packaging_cost: 0.45
-  shipping_to_eu_per_unit: 0.90  # 海運頭程至歐洲倉
-  duty_rate: 0.065               # 進口關稅（依 HS code 確認，此為估計值）
+  unit_cost: 4.00                # 待確認：向 Champion Sports／工廠取得實際 FOB 報價
+  packaging_cost: 0.40           # 待確認：綁帶＋貼標／彩盒
+  shipping_to_eu_per_unit: 1.20  # 待確認：海運頭程至歐洲倉（捲起約 61 x 12 x 12 cm）
+  duty_rate: 0.027               # 待確認：HS 9506.91（健身器材）2.7%；若歸 3926（塑膠製品）為 6.5%
 
-# 建議售價（含 VAT）
+# 建議售價（含 VAT）—— 待確認，依歐洲 PVC 6 mm 瑜珈墊常見價格帶初估
 suggested_retail_price:
-  EUR: 19.90
-  CZK: 499
-  USD: 21.99
+  EUR: 24.90
+  CZK: 599
+  PLN: 99
+  USD: 24.99
 
-moq: 500
+moq: 500   # 待確認
 
-# 目標國家與語言（vat_rate 為標準稅率，實際適用稅率請再確認）
+# 目標國家與語言（vat_rate 為標準稅率）
 target_markets:
   - country: CZ
     languages: [cs]
@@ -57,34 +64,38 @@ target_markets:
 target_channels:
   - Amazon.de（Pan-EU FBA）
   - Alza.cz
-  - Mall.cz / Allegro
   - Kaufland Marketplace
-  - B2B 居家用品經銷商
+  - Mall.cz / Allegro
+  - 運動用品連鎖／健身房與瑜珈教室 B2B
   - 自有 Shopify 網站
 
 # 品牌語氣
 brand_voice: >
-  簡潔、實用、環保意識；用具體情境說明好處，不誇大。
-  語氣友善專業，避免過度行銷用語。
+  積極、鼓勵、實在（JFIT 標語：Fuel your mind and body）。
+  用具體運動情境說明好處，適合新手到進階使用者；不誇大、不做健康療效宣稱。
 
-# 文案禁用字詞（含法規風險用語）
+# 文案禁用字詞（含法規與平台風險用語）
 banned_words:
-  - 100% safe
-  - BPA-free guaranteed
-  - eco-friendly          # 歐盟綠色聲明指令下，未經證實的環保宣稱有風險
+  - eco-friendly          # PVC 材質，且歐盟綠色聲明規範下未經證實的環保宣稱有風險
   - biodegradable
-  - antibacterial         # 抗菌宣稱可能涉及歐盟殺生物劑法規（BPR）
-  - best in the world
+  - non-toxic             # 需有檢測支持，否則屬未經證實宣稱
+  - phthalate-free        # 僅在取得 REACH 鄰苯二甲酸酯檢測報告後才可使用
+  - 100% safe
+  - antibacterial         # 可能涉及歐盟殺生物劑法規（BPR）
   - medical grade
+  - cures back pain       # 醫療療效宣稱
+  - best in the world
 
-# 認證文件清單（已具備 / 需準備）
+# 認證與文件（已具備 / 需準備）
 certifications:
-  - LFGB 食品接觸材料檢測報告（已具備）
-  - EU 1935/2004 食品接觸材料符合性聲明 DoC（需準備）
-  - FDA 食品接觸檢測（美國，已具備）
+  - JFIT 歐盟銷售授權書與商標使用授權（假設已具備，待確認範圍）
+  - JFIT 歐盟商標註冊（EUIPO）— Amazon.de Brand Registry 需要（待確認）
+  - REACH 附件 XVII 第 51/52 項 鄰苯二甲酸酯檢測（PVC 材質必測，需準備）
+  - REACH 附件 XVII 第 50 項 多環芳香烴 PAH 檢測（與皮膚接觸的塑膠，需準備）
   - REACH SVHC 檢測（需準備）
-  - GPSR 歐盟責任人（EU Responsible Person）資訊（需準備）
+  - GPSR 歐盟責任人（EU Responsible Person）資訊與產品安全資訊（需準備）
   - 包裝 EPR 註冊（德國 LUCID、捷克 EKO-KOM，需準備）
+  - 美國既有檢測報告（如 CPSIA／Prop 65，待確認是否可沿用為參考）
 
 # 利潤底線（淨利率，0~1）
 min_profit_margin: 0.25
