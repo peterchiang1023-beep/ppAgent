@@ -91,6 +91,46 @@ uv run python main.py drafts reject  <草稿編號> --note "語氣需調整"
 
 已啟用 venv 時可省略 `uv run`。每次研究約使用 10~20 次網路搜尋，成本依模型與搜尋量而定（Claude 網路搜尋另計費），可用 `main.py budget` 查看。
 
+## 以 HTTP API 執行（server.py）
+
+除了命令列，也可以把 Agent 當成 API 呼叫（本機測試或之後部署都可用）。
+
+```bash
+uv run uvicorn server:app --reload --port 8000
+# 互動式文件（可直接在瀏覽器試打）：http://127.0.0.1:8000/docs
+```
+
+一次研究需要數分鐘，所以採「建立工作 → 輪詢結果」：
+
+```bash
+# 建立任務（立刻回傳 run_id）
+curl -X POST http://127.0.0.1:8000/runs \
+  -H 'Content-Type: application/json' \
+  -d '{"task": "research", "market": "CZ", "profile": "example"}'
+
+# 查詢狀態：running / succeeded / failed，完成後含 reports 與 final_text
+curl http://127.0.0.1:8000/runs/<run_id>
+
+# 讀取報告內容
+curl http://127.0.0.1:8000/reports
+curl http://127.0.0.1:8000/reports/<檔名>.md
+```
+
+| 方法 | 路徑 | 說明 |
+|---|---|---|
+| GET | `/health` | 健康檢查，`busy` 表示是否有任務執行中 |
+| POST | `/runs` | 建立任務；`task` 為 `research` 或 `compliance`，`profile` 為 `profiles/` 下的檔名（不含 `.yaml`） |
+| GET | `/runs`、`/runs/{run_id}` | 任務列表／狀態與結果 |
+| GET | `/reports`、`/reports/{檔名}` | 報告列表／Markdown 內容 |
+| GET | `/budget` | 今日預算與呼叫次數 |
+| GET | `/drafts?status=pending`、`/drafts/{id}` | 草稿佇列 |
+| POST | `/drafts/{id}/approve`、`/drafts/{id}/reject` | 人工核准／退回，body：`{"note": "..."}` |
+
+注意：
+- 同一時間只執行一個任務，忙碌時回傳 `409`；超過預算回傳 `429`。
+- 任務狀態存在記憶體，伺服器重啟後清空（報告、草稿、日誌仍在磁碟上）。
+- 要對外開放前，請在 `.env` 設定 `SERVER_API_KEY`，呼叫時帶 `-H 'X-API-Key: <金鑰>'`。
+
 ## 換產品
 
 複製 `profiles/example.yaml` 修改即可。欄位：
